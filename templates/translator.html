@@ -1,0 +1,239 @@
+{% extends "base_sub.html" %}
+
+{% block title %}Traductor · Señas Co{% endblock %}
+{% block meta_description %}Traduce texto en español a Lengua de Señas Colombiana (LSC) en tiempo real con spaCy y un diccionario visual.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/translator.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="tx-hero">
+    <div class="container">
+        <div class="tx-hero__inner fade-up is-visible">
+            <div class="tx-hero__eyebrow">
+                <span class="tx-hero__dot" aria-hidden="true"></span>
+                Traductor en tiempo real
+            </div>
+            <h1 class="tx-hero__title">Traduce español a <span class="accent">Lengua de Señas Colombiana</span></h1>
+            <p class="tx-hero__lead">
+                Escribe una frase y obtén su <strong>glosa LSC</strong> con orden TSOV (tiempo · sujeto ·
+                objeto · verbo). Filtramos artículos y preposiciones, movemos la negación y las palabras
+                interrogativas al final, y solo aplicamos dactilología a nombres propios y siglas.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="tx-workspace">
+    <div class="container">
+        <div class="tx-grid">
+
+            <!-- ===== Panel izquierdo: entrada ===== -->
+            <article class="tx-panel tx-panel--input" aria-label="Entrada de texto en español">
+                <header class="tx-panel__head">
+                    <div>
+                        <p class="tx-panel__label">Español</p>
+                        <p class="tx-panel__hint">Escribe una frase corta para traducir</p>
+                    </div>
+                    <button class="tx-iconbtn" id="btnLimpiar" type="button" title="Limpiar texto" aria-label="Limpiar texto">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </header>
+
+                <textarea id="textoEntrada"
+                    class="tx-input"
+                    placeholder="Ej: Hola, ¿cómo estás? Me llamo Carlitos."
+                    maxlength="2000"
+                    rows="6"
+                    aria-label="Texto en español para traducir"></textarea>
+
+                <footer class="tx-panel__foot">
+                    <span class="tx-counter">
+                        <span id="charCount">0</span> / 2000
+                    </span>
+                    <button class="button button--primary tx-translate-btn" id="btnTraducir" type="button">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="5 12 10 17 20 7"></polyline>
+                        </svg>
+                        Traducir
+                    </button>
+                </footer>
+
+                <div class="tx-examples" aria-label="Ejemplos rápidos">
+                    <p class="tx-examples__label">Ejemplos</p>
+                    <div class="tx-examples__list">
+                        <button type="button" class="tx-chip" data-ejemplo="Hola, ¿cómo estás?">Hola, ¿cómo estás?</button>
+                        <button type="button" class="tx-chip" data-ejemplo="Me llamo Carlitos">Me llamo Carlitos</button>
+                        <button type="button" class="tx-chip" data-ejemplo="Buenos días, gracias por favor">Buenos días, gracias</button>
+                        <button type="button" class="tx-chip" data-ejemplo="Necesito ayuda">Necesito ayuda</button>
+                        <button type="button" class="tx-chip" data-ejemplo="Mi familia vive en la ciudad">Mi familia vive en la ciudad</button>
+                        <button type="button" class="tx-chip" data-ejemplo="Quiero comer manzana y beber agua">Comer manzana y beber agua</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ===== Panel derecho: salida ===== -->
+            <article class="tx-panel tx-panel--output" aria-label="Secuencia de señas resultante">
+                <header class="tx-panel__head">
+                    <div>
+                        <p class="tx-panel__label">Lengua de Señas Colombiana</p>
+                        <p class="tx-panel__hint" id="txStatusHint">Esperando traducción…</p>
+                    </div>
+                    <div class="tx-status" id="txStatus" aria-live="polite"></div>
+                </header>
+
+                <!-- Glosa LSC + indicadores -->
+                <div class="tx-glosa" id="txGlosaBlock" hidden>
+                    <span class="tx-glosa__label">Glosa LSC</span>
+                    <span class="tx-glosa__text" id="txGlosaText"></span>
+                    <span class="tx-glosa-badges" id="txGlosaBadges"></span>
+                </div>
+
+                <p class="tx-disclaimer" id="txDisclaimer" hidden>
+                    Esta es una <strong>glosa aproximada</strong> en orden TSOV (tiempo · sujeto · objeto · verbo)
+                    apoyada con video de cada seña. Aunque los clips individuales son fluidos,
+                    la LSC real combina expresiones faciales, clasificadores y referenciación espacial
+                    de forma simultánea — algo que solo un intérprete humano logra al 100%.
+                </p>
+
+                <!-- Reproductor principal -->
+                <div class="tx-player" id="txPlayer" data-state="empty">
+                    <div class="tx-player__stage">
+                        <div class="tx-player__placeholder" id="txPlaceholder">
+                            <div class="tx-player__placeholder-icon" aria-hidden="true">
+                                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 8c0-3.5-2.7-6-6-6s-6 2.5-6 6"></path>
+                                    <path d="M8 10v7a4 4 0 0 0 4 4h0a4 4 0 0 0 4-4v-7"></path>
+                                    <path d="M12 10V6"></path>
+                                </svg>
+                            </div>
+                            <p class="tx-player__placeholder-text">Aquí aparecerán las señas</p>
+                            <p class="tx-player__placeholder-sub">Escribe una frase a la izquierda y pulsa <strong>Traducir</strong>.</p>
+                        </div>
+
+                        <img class="tx-player__media tx-player__gif" id="txGif" alt="" aria-hidden="true" hidden>
+                        <video class="tx-player__media tx-player__video" id="txVideo" autoplay muted loop playsinline aria-hidden="true" hidden></video>
+
+                        <!-- Overlay de anotaciones gramaticales LSC -->
+                        <div class="tx-player__nmm" id="txNmm" hidden>
+                            <span class="tx-player__nmm-icon" id="txNmmIcon"></span>
+                            <span class="tx-player__nmm-label" id="txNmmLabel"></span>
+                        </div>
+                        <div class="tx-player__direccion" id="txDireccion" hidden>
+                            <span class="tx-player__direccion-arrow" id="txDireccionArrow"></span>
+                        </div>
+
+                        <div class="tx-player__fallback" id="txFallback" hidden>
+                            <span class="tx-player__fallback-tag">GIF pendiente</span>
+                            <p class="tx-player__fallback-word" id="txFallbackWord">—</p>
+                            <p class="tx-player__fallback-hint">Añade el recurso visual a <code>static/gifs/</code>.</p>
+                        </div>
+
+                        <div class="tx-player__loader" id="txLoader" hidden aria-hidden="true">
+                            <div class="tx-spinner"></div>
+                            <p>Procesando…</p>
+                        </div>
+                    </div>
+
+                    <div class="tx-player__meta">
+                        <div class="tx-player__current">
+                            <span class="tx-player__current-label">Seña actual</span>
+                            <span class="tx-player__current-word" id="txCurrentWord">—</span>
+                        </div>
+                        <div class="tx-player__progress">
+                            <span id="txProgressText">0 / 0</span>
+                            <div class="tx-progressbar" aria-hidden="true">
+                                <div class="tx-progressbar__fill" id="txProgressFill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tx-controls" role="group" aria-label="Controles de reproducción">
+                        <button type="button" class="tx-ctrl" id="btnAnterior" title="Anterior" aria-label="Seña anterior" disabled>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        <button type="button" class="tx-ctrl tx-ctrl--primary" id="btnPlay" title="Reproducir / Pausar" aria-label="Reproducir o pausar" disabled>
+                            <svg class="tx-ctrl__icon-play" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+                            <svg class="tx-ctrl__icon-pause" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" hidden><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                        </button>
+                        <button type="button" class="tx-ctrl" id="btnSiguiente" title="Siguiente" aria-label="Siguiente seña" disabled>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                        <button type="button" class="tx-ctrl" id="btnReiniciar" title="Reiniciar" aria-label="Reiniciar reproducción" disabled>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                        </button>
+
+                        <div class="tx-speed" role="group" aria-label="Velocidad de reproducción">
+                            <button type="button" class="tx-speed__btn" data-speed="0.5">0.5x</button>
+                            <button type="button" class="tx-speed__btn is-active" data-speed="1">1x</button>
+                            <button type="button" class="tx-speed__btn" data-speed="1.5">1.5x</button>
+                            <button type="button" class="tx-speed__btn" data-speed="2">2x</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tira de secuencia -->
+                <div class="tx-sequence" id="txSequence" aria-label="Secuencia completa de señas"></div>
+
+                <!-- Leyenda de roles -->
+                <div class="tx-legend" id="txLegend" hidden>
+                    <span><i class="tx-legend__dot tx-legend__dot--tiempo"></i>Tiempo</span>
+                    <span><i class="tx-legend__dot tx-legend__dot--sujeto"></i>Sujeto</span>
+                    <span><i class="tx-legend__dot tx-legend__dot--objeto"></i>Objeto</span>
+                    <span><i class="tx-legend__dot tx-legend__dot--lugar"></i>Lugar</span>
+                    <span><i class="tx-legend__dot tx-legend__dot--verbo"></i>Verbo</span>
+                </div>
+
+            </article>
+
+        </div>
+
+        <!-- ===== Panel inferior: tokens & diagnósticos ===== -->
+        <section class="tx-insights" id="txInsights" hidden>
+            <div class="tx-insights__grid">
+                <div class="tx-insights__card">
+                    <p class="tx-insights__label">Glosa por tokens</p>
+                    <div class="tx-tokens" id="txTokens"></div>
+                </div>
+                <div class="tx-insights__card">
+                    <p class="tx-insights__label">Dactilología (nombres y siglas)</p>
+                    <div class="tx-tokens" id="txDactilo"></div>
+                </div>
+                <div class="tx-insights__card">
+                    <p class="tx-insights__label">Sin seña en el diccionario</p>
+                    <div class="tx-tokens" id="txNoDisponibles"></div>
+                </div>
+                <div class="tx-insights__card">
+                    <p class="tx-insights__label">Resumen</p>
+                    <dl class="tx-summary">
+                        <div><dt>Total de señas</dt><dd id="sumTotalSenas">0</dd></div>
+                        <div><dt>Tokens en glosa</dt><dd id="sumTokens">0</dd></div>
+                        <div><dt>Deletreadas</dt><dd id="sumDactilo">0</dd></div>
+                        <div><dt>No disponibles</dt><dd id="sumNoEnc">0</dd></div>
+                    </dl>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mensaje de error -->
+        <div class="tx-alert" id="txAlert" role="alert" hidden>
+            <div class="tx-alert__icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <div>
+                <p class="tx-alert__title">Ocurrió un problema</p>
+                <p class="tx-alert__text" id="txAlertText"></p>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/translator.js') }}"></script>
+{% endblock %}

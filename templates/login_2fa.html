@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación 2FA · Señas Co</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230b1220'/><text x='32' y='40' text-anchor='middle' font-size='28' font-family='Arial' fill='%2393c5fd' font-weight='700'>SC</text></svg>">
+</head>
+<body>
+<a class="auth-back" href="{{ url_for('main.login') }}">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Cancelar
+</a>
+
+<main class="auth-page">
+    <aside class="auth-aside">
+        <div class="blob blob--1"></div><div class="blob blob--2"></div><div class="blob blob--3"></div>
+        <a href="{{ url_for('main.index') }}" class="auth-brand">
+            <span class="auth-brand__mark"><svg width="22" height="22" viewBox="0 0 26 26"><path d="M5 15.2C8 8 18 8 21 15.2" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M7.5 19.2C10 13.7 16 13.7 18.5 19.2" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.85" fill="none"/></svg></span>
+            <span><span class="auth-brand__name">Señas Co</span><span class="auth-brand__tag">Verificación en dos pasos</span></span>
+        </a>
+        <div class="auth-hero">
+            <span class="auth-hero__eyebrow">Paso 2 de 2</span>
+            <h2>Estamos protegiendo <em>tu cuenta</em>.</h2>
+            <p class="auth-hero__lead">Abre tu app de autenticación (Google Authenticator, Authy, 1Password) e ingresa el código de 6 dígitos que aparece para tu cuenta de Señas Co.</p>
+        </div>
+        <div class="auth-aside__foot"><span>© 2025 Señas Co</span></div>
+    </aside>
+
+    <section class="auth-main">
+        <div class="auth-card">
+            <header class="auth-card__head">
+                <h1 class="auth-card__title">Código de verificación</h1>
+                <p class="auth-card__subtitle">Ingresa los 6 dígitos generados por tu autenticador.</p>
+            </header>
+
+            <div class="tabs" role="tablist">
+                <button class="tab is-active" data-tab="totp">Autenticador</button>
+                <button class="tab" data-tab="code">Código</button>
+                <button class="tab" data-tab="file">Archivo</button>
+            </div>
+
+            <!-- TOTP -->
+            <div class="tab-panel is-active" data-panel="totp">
+                <form id="form2fa" class="auth-form" novalidate>
+                    <div class="otp-row" id="otpRow">
+                        <input type="text" maxlength="1" inputmode="numeric" autocomplete="one-time-code" required>
+                        <input type="text" maxlength="1" inputmode="numeric" required>
+                        <input type="text" maxlength="1" inputmode="numeric" required>
+                        <input type="text" maxlength="1" inputmode="numeric" required>
+                        <input type="text" maxlength="1" inputmode="numeric" required>
+                        <input type="text" maxlength="1" inputmode="numeric" required>
+                    </div>
+                    <span class="field__error" data-error-for="totp"></span>
+                    <button type="submit" class="btn-auth" id="btn2fa">
+                        <span class="btn-auth__label">Verificar</span>
+                        <span class="btn-auth__spinner"></span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Recovery code -->
+            <div class="tab-panel" data-panel="code">
+                <form id="formRecCode" class="auth-form" novalidate>
+                    <div class="alert alert--info">Cada código sirve <strong>una sola vez</strong>.</div>
+                    <div class="field">
+                        <label class="field__label" for="recCode">Código de recuperación</label>
+                        <div class="field__wrap">
+                            <input type="text" id="recCode" name="recCode" placeholder="XXXX-XXXX" required style="padding-left:1rem;text-transform:uppercase;letter-spacing:0.1em;">
+                        </div>
+                        <span class="field__error" data-error-for="recCode"></span>
+                    </div>
+                    <button type="submit" class="btn-auth" id="btnRecCode">
+                        <span class="btn-auth__label">Usar código</span>
+                        <span class="btn-auth__spinner"></span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Recovery file -->
+            <div class="tab-panel" data-panel="file">
+                <form id="formRecFile" class="auth-form" novalidate>
+                    <div class="alert alert--warn">Este es el archivo <code>recovery_*.txt</code> que recibiste por email al registrarte.</div>
+                    <label class="dropzone" id="dropzone">
+                        <svg class="dropzone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <strong id="dzLabel">Suelta el archivo aquí o haz clic</strong>
+                        <p class="dropzone__hint">Formato .txt · máx 8 KB</p>
+                        <input type="file" id="fileInput" name="archivo" accept=".txt,text/plain" required>
+                    </label>
+                    <button type="submit" class="btn-auth" id="btnRecFile">
+                        <span class="btn-auth__label">Subir y entrar</span>
+                        <span class="btn-auth__spinner"></span>
+                    </button>
+                </form>
+            </div>
+
+            <p class="auth-card__foot">¿Perdiste todo? <a href="{{ url_for('main.recuperar') }}">Restablecer por correo</a></p>
+        </div>
+    </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+</html>

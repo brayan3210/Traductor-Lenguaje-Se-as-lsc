@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurar 2FA · Señas Co</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230b1220'/><text x='32' y='40' text-anchor='middle' font-size='28' font-family='Arial' fill='%2393c5fd' font-weight='700'>SC</text></svg>">
+</head>
+<body>
+<a class="auth-back" href="{{ url_for('main.index') }}">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Más tarde
+</a>
+
+<main class="auth-page">
+    <aside class="auth-aside">
+        <div class="blob blob--1"></div><div class="blob blob--2"></div><div class="blob blob--3"></div>
+        <a href="{{ url_for('main.index') }}" class="auth-brand">
+            <span class="auth-brand__mark"><svg width="22" height="22" viewBox="0 0 26 26"><path d="M5 15.2C8 8 18 8 21 15.2" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M7.5 19.2C10 13.7 16 13.7 18.5 19.2" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.85" fill="none"/></svg></span>
+            <span><span class="auth-brand__name">Señas Co</span><span class="auth-brand__tag">Activa la verificación en dos pasos</span></span>
+        </a>
+        <div class="auth-hero">
+            <span class="auth-hero__eyebrow">Paso final</span>
+            <h2>Asegura tu cuenta con <em>Google Authenticator</em>.</h2>
+            <p class="auth-hero__lead">Escanea el código QR con la app de tu preferencia (Google Authenticator, Authy, 1Password, Microsoft Authenticator) y luego ingresa el código de 6 dígitos para confirmar.</p>
+            <ul class="auth-features">
+                <li><span class="auth-features__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span> Funciona aunque pierdas la conexión</li>
+                <li><span class="auth-features__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span> El código cambia cada 30 segundos</li>
+                <li><span class="auth-features__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span> Compatible con todas las apps TOTP</li>
+            </ul>
+        </div>
+        <div class="auth-aside__foot"><span>© 2025 Señas Co</span></div>
+    </aside>
+
+    <section class="auth-main">
+        <div class="auth-card">
+            <header class="auth-card__head">
+                <h1 class="auth-card__title">Configurar 2FA</h1>
+                <p class="auth-card__subtitle">Escanea el QR con tu app de autenticación.</p>
+            </header>
+
+            <div id="setupLoader" class="alert alert--info">Generando código…</div>
+            <div id="setupContent" style="display:none;">
+                <div class="qr-frame">
+                    <img id="qrImg" src="" alt="QR code para 2FA">
+                </div>
+                <p class="auth-card__subtitle" style="text-align:center;">¿No puedes escanear? Ingresa este código manualmente:</p>
+                <div class="totp-secret" id="totpSecret"></div>
+
+                <form id="formActivar" class="auth-form" novalidate>
+                    <p class="field__label" style="text-align:center;">Verifica con el código de 6 dígitos</p>
+                    <div class="otp-row" id="otpRow">
+                        <input type="text" maxlength="1" inputmode="numeric" autocomplete="one-time-code" required>
+                        <input type="text" maxlength="1" inputmode="numeric" required>
+                        <input type="text" maxlength="1" inputmode="numeric" required>
+                        <input type="text" maxlength="1" inputmode="numeric" required>
+                        <input type="text" maxlength="1" inputmode="numeric" required>
+                        <input type="text" maxlength="1" inputmode="numeric" required>
+                    </div>
+                    <span class="field__error" data-error-for="totp"></span>
+                    <button type="submit" class="btn-auth" id="btnActivar">
+                        <span class="btn-auth__label">Activar 2FA</span>
+                        <span class="btn-auth__spinner"></span>
+                    </button>
+                </form>
+            </div>
+
+            <p class="auth-card__foot">¿Quieres hacerlo después? <a href="{{ url_for('main.index') }}">Saltar por ahora</a></p>
+        </div>
+    </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+</html>

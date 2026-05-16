@@ -1,0 +1,61 @@
+{% extends "base_sub.html" %}
+
+{% block title %}Asistente IA · Señas Co{% endblock %}
+{% block meta_description %}Conversa con un modelo de IA local (GPT4All) integrado en la plataforma Señas Co.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="chat-page">
+    <div class="container chat-shell">
+        <header class="chat-header">
+            <div class="chat-header__title">
+                <span class="chat-status" aria-hidden="true"></span>
+                <div>
+                    <h1>Asistente Señas Co</h1>
+                    <p>Conversación con modelo local · GPT4All</p>
+                </div>
+            </div>
+            <div class="chat-header__meta">
+                <span class="chip">Local</span>
+                <span class="chip chip--accent">Privado</span>
+            </div>
+        </header>
+
+        <div class="chat-window" id="chatWindow" aria-live="polite">
+            <article class="msg msg--bot">
+                <div class="msg__avatar" aria-hidden="true">SC</div>
+                <div class="msg__bubble">
+                    <p>Hola, soy el asistente local de <strong>Señas Co</strong>. Puedes preguntarme cualquier cosa y responderé desde un modelo que se ejecuta en tu propia máquina.</p>
+                    <span class="msg__time"></span>
+                </div>
+            </article>
+        </div>
+
+        <form class="chat-composer" id="chatForm" autocomplete="off">
+            <label for="chatInput" class="visually-hidden">Mensaje</label>
+            <input
+                id="chatInput"
+                name="mensaje"
+                type="text"
+                placeholder="Escribe tu mensaje…"
+                maxlength="1000"
+                required>
+            <button type="submit" class="chat-send" id="chatSend" aria-label="Enviar mensaje">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+            </button>
+        </form>
+
+        <p class="chat-foot">El modelo se descarga la primera vez (~2&nbsp;GB) y queda almacenado localmente para futuras consultas.</p>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}

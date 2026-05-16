@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}Señas Co — Traductor de español a Lengua de Señas Colombiana (LSC).{% endblock %}">
+    <meta name="author" content="Señas Co">
+    <title>{% block title %}Señas Co | Traductor LSC{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230b1220'/><path d='M16 38c6-13 26-13 32 0' fill='none' stroke='%233b82f6' stroke-width='4' stroke-linecap='round'/><path d='M20 44c5-10 19-10 24 0' fill='none' stroke='%2314b8a6' stroke-width='4' stroke-linecap='round'/><text x='32' y='28' text-anchor='middle' font-size='16' font-family='Arial' fill='white' font-weight='700'>SC</text></svg>">
+</head>
+
+<body>
+    <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+    <header class="topbar" id="topbar">
+        <div class="container topbar__inner">
+            <a class="brand" href="{{ url_for('main.index') }}" aria-label="Ir al inicio">
+                <span class="brand__mark" aria-hidden="true">
+                    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 15.2C8 8 18 8 21 15.2" stroke="#dbeafe" stroke-width="1.8" stroke-linecap="round" />
+                        <path d="M7.5 19.2C10 13.7 16 13.7 18.5 19.2" stroke="#14b8a6" stroke-width="1.8" stroke-linecap="round" />
+                    </svg>
+                </span>
+                <span class="brand__wording">
+                    <span class="brand__name">Señas Co</span>
+                    <span class="brand__tagline">Traductor de Lengua de Señas Colombiana</span>
+                </span>
+            </a>
+
+            <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" id="menuToggle">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+
+            <nav class="nav" id="mainNav" aria-label="Navegación principal">
+                <a href="{{ url_for('main.index') }}" {% if request.endpoint == 'main.index' %}class="is-active"{% endif %}>Inicio</a>
+                <a href="{{ url_for('main.traductor') }}" {% if request.endpoint == 'main.traductor' %}class="is-active"{% endif %}>Traductor</a>
+                <a href="{{ url_for('main.diccionario') }}" {% if request.endpoint == 'main.diccionario' %}class="is-active"{% endif %}>Diccionario</a>
+                <a href="{{ url_for('main.chat') }}" {% if request.endpoint == 'main.chat' %}class="is-active"{% endif %}>Asistente</a>
+                {% if current_user %}
+                <span class="nav__user" title="{{ current_user.email }}">
+                    <span class="nav__user-avatar" aria-hidden="true">{{ current_user.iniciales }}</span>
+                    <span>{{ current_user.nombres }}</span>
+                    <button type="button" class="nav__logout" id="btnLogout" aria-label="Cerrar sesión" title="Cerrar sesión">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                    </button>
+                </span>
+                {% else %}
+                <a href="{{ url_for('main.login') }}" {% if request.endpoint == 'main.login' %}class="is-active"{% endif %}>Ingresar</a>
+                {% endif %}
+                <a class="nav__cta" href="{{ url_for('main.traductor') }}">Traductor</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__brand">
+                <p class="footer__title">Señas Co</p>
+                <p class="footer__text">Traductor de Lengua de Señas Colombiana</p>
+            </div>
+            <div class="footer__links">
+                <a href="{{ url_for('main.traductor') }}">Traductor</a>
+                <a href="{{ url_for('main.diccionario') }}">Diccionario</a>
+                <a href="{{ url_for('main.index') }}#tecnologias">Tecnologías</a>
+                <a href="{{ url_for('main.index') }}#mision">Misión</a>
+            </div>
+            <p class="footer__meta">Proyecto académico · Interfaz institucional · 2025</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initMobileMenu();
+            initTopbarScroll();
+            initParticles();
+            initLogout();
+        });
+
+        function initLogout() {
+            const btn = document.getElementById('btnLogout');
+            if (!btn) return;
+            btn.addEventListener('click', async () => {
+                try { await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }); }
+                finally { window.location.reload(); }
+            });
+        }
+
+        function initMobileMenu() {
+            const toggle = document.getElementById('menuToggle');
+            const nav = document.getElementById('mainNav');
+            if (!toggle || !nav) return;
+            toggle.addEventListener('click', () => {
+                const isOpen = nav.classList.toggle('is-open');
+                toggle.setAttribute('aria-expanded', isOpen);
+            });
+            nav.querySelectorAll('a').forEach((link) => {
+                link.addEventListener('click', () => {
+                    nav.classList.remove('is-open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+            document.addEventListener('click', (e) => {
+                if (!nav.contains(e.target) && !toggle.contains(e.target)) {
+                    nav.classList.remove('is-open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+
+        function initTopbarScroll() {
+            const topbar = document.getElementById('topbar');
+            if (!topbar) return;
+            const onScroll = () => topbar.classList.toggle('is-scrolled', window.scrollY > 30);
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+        }
+
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            if (!canvas) return;
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (prefersReducedMotion) { canvas.style.display = 'none'; return; }
+
+            const ctx = canvas.getContext('2d');
+            let particles = [], animationId, width, height;
+
+            const resize = () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            };
+            const createParticles = () => {
+                const count = Math.min(Math.floor((width * height) / 18000), 80);
+                particles = [];
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        x: Math.random() * width, y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+                        r: Math.random() * 1.5 + 0.5,
+                        alpha: Math.random() * 0.4 + 0.1,
+                        color: Math.random() > 0.5 ? '59, 130, 246' : '20, 184, 166',
+                    });
+                }
+            };
+            const draw = () => {
+                ctx.clearRect(0, 0, width, height);
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 140) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(59, 130, 246, ${(1 - dist / 140) * 0.12})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                particles.forEach((p) => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
+                    ctx.fill();
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < -10) p.x = width + 10;
+                    if (p.x > width + 10) p.x = -10;
+                    if (p.y < -10) p.y = height + 10;
+                    if (p.y > height + 10) p.y = -10;
+                });
+                animationId = requestAnimationFrame(draw);
+            };
+
+            resize(); createParticles(); draw();
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    cancelAnimationFrame(animationId);
+                    resize(); createParticles(); draw();
+                }, 200);
+            });
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

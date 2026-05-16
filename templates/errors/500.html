@@ -1,0 +1,24 @@
+{% extends "base_sub.html" %}
+
+{% block title %}Error interno · Señas Co{% endblock %}
+
+{% block content %}
+<section class="tx-hero">
+    <div class="container">
+        <div class="tx-hero__inner" style="padding: 4rem 0;">
+            <div class="tx-hero__eyebrow">
+                <span class="tx-hero__dot" aria-hidden="true"></span>
+                Error 500
+            </div>
+            <h1 class="tx-hero__title">Algo salió mal</h1>
+            <p class="tx-hero__lead">
+                Ocurrió un error interno al procesar tu solicitud. Si el problema persiste, verifica que MySQL
+                esté activo en XAMPP y que el modelo de spaCy esté instalado.
+            </p>
+            <div style="display:flex; gap:.8rem; justify-content:center; margin-top:2rem; flex-wrap:wrap;">
+                <a class="button button--primary" href="{{ url_for('main.index') }}">Volver al inicio</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

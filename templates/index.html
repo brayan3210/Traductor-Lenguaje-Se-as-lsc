@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Señas Co | Traductor de Lengua de Señas Colombiana es una plataforma web institucional para traducir texto en español a LSC con un diseño serio, claro y accesible.">
+    <meta name="keywords"
+        content="Lengua de Señas Colombiana, LSC, accesibilidad, traducción, comunicación, plataforma web, Señas Co">
+    <meta name="author" content="Señas Co">
+    <title>Señas Co | Traductor de Lengua de Señas Colombiana</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230b1220'/><path d='M16 38c6-13 26-13 32 0' fill='none' stroke='%233b82f6' stroke-width='4' stroke-linecap='round'/><path d='M20 44c5-10 19-10 24 0' fill='none' stroke='%2314b8a6' stroke-width='4' stroke-linecap='round'/><text x='32' y='28' text-anchor='middle' font-size='16' font-family='Arial' fill='white' font-weight='700'>SC</text></svg>">
+</head>
+
+<body>
+    <!-- Particle Background -->
+    <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+    <!-- ========== HEADER ========== -->
+    <header class="topbar" id="topbar">
+        <div class="container topbar__inner">
+            <a class="brand" href="#inicio" aria-label="Ir al inicio">
+                <span class="brand__mark" aria-hidden="true">
+                    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 15.2C8 8 18 8 21 15.2" stroke="#dbeafe" stroke-width="1.8" stroke-linecap="round" />
+                        <path d="M7.5 19.2C10 13.7 16 13.7 18.5 19.2" stroke="#14b8a6" stroke-width="1.8"
+                            stroke-linecap="round" />
+                    </svg>
+                </span>
+                <span class="brand__wording">
+                    <span class="brand__name">Señas Co</span>
+                    <span class="brand__tagline">Traductor de Lengua de Señas Colombiana</span>
+                </span>
+            </a>
+
+            <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" id="menuToggle">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+
+            <nav class="nav" id="mainNav" aria-label="Navegación principal">
+                <a class="is-active" href="#inicio" data-nav>Inicio</a>
+                <a href="#resumen" data-nav>Resumen</a>
+                <a href="#tecnologias" data-nav>Tecnologías</a>
+                <a href="#mision" data-nav>Misión</a>
+                <a href="#objetivos" data-nav>Objetivos</a>
+                <a href="{{ url_for('main.diccionario') }}">Diccionario</a>
+                <a href="{{ url_for('main.chat') }}">Asistente</a>
+                {% if current_user %}
+                <span class="nav__user" title="{{ current_user.email }}">
+                    <span class="nav__user-avatar" aria-hidden="true">{{ current_user.iniciales }}</span>
+                    <span>{{ current_user.nombres }}</span>
+                    <button type="button" class="nav__logout" id="btnLogout" aria-label="Cerrar sesión" title="Cerrar sesión">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                    </button>
+                </span>
+                {% else %}
+                <a href="{{ url_for('main.login') }}">Ingresar</a>
+                {% endif %}
+                <a class="nav__cta" href="{{ url_for('main.traductor') }}">Traductor</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ========== MAIN ========== -->
+    <main>
+
+        <!-- ===== HERO / INICIO ===== -->
+        <section class="hero" id="inicio">
+            <div class="container hero__grid">
+                <div>
+                    <div class="hero__eyebrow fade-up">Lengua de Señas Colombiana</div>
+                    <h1 class="fade-up fade-up-delay-1">Comunicación clara para contextos <span
+                            class="accent">institucionales</span>.</h1>
+                    <p class="hero__lead fade-up fade-up-delay-2">
+                        Señas Co es una plataforma web diseñada para traducir texto en español a Lengua de Señas
+                        Colombiana mediante una interfaz sobria, organizada y alineada con un entorno académico o
+                        profesional. Esta página principal resume el contenido de todas las secciones del proyecto para
+                        ofrecer una visión completa desde el primer vistazo.
+                    </p>
+                    <div class="hero__actions fade-up fade-up-delay-3">
+                        <a class="button button--primary" href="{{ url_for('main.traductor') }}">Abrir traductor</a>
+                        <a class="button button--secondary" href="{{ url_for('main.diccionario') }}">Ver diccionario</a>
+                        <a class="button button--secondary" href="{{ url_for('main.chat') }}">Conversar con la IA</a>
+                    </div>
+                </div>
+
+                <aside class="hero__panel fade-up fade-up-delay-2" aria-label="Resumen del proyecto">
+                    <div class="hero__panel-top">
+                        <span class="panel-chip">Resumen ejecutivo</span>
+                    </div>
+
+                    <div class="panel-card">
+                        <p class="panel-card__label">Propósito</p>
+                        <p class="panel-card__value">
+                            Fortalecer la accesibilidad mediante una solución visual, seria y funcional para traducir
+                            texto a LSC.
+                        </p>
+                    </div>
+
+                    <div class="panel-card">
+                        <p class="panel-card__label">Estructura</p>
+                        <p class="panel-card__value">
+                            Cuatro apartados organizados en una sola página: resumen, tecnologías, misión y objetivos.
+                        </p>
+                    </div>
+
+                    <div class="panel-card">
+                        <p class="panel-card__label">Enfoque</p>
+                        <p class="panel-card__value">
+                            Integrar lenguaje claro, presentación institucional y una experiencia de lectura ordenada.
+                        </p>
+                    </div>
+
+                    <div class="metrics">
+                        <div class="metric">
+                            <span class="metric__value">4</span>
+                            <span class="metric__label">Apartados principales</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric__value">1</span>
+                            <span class="metric__label">Sistema visual unificado</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric__value">100%</span>
+                            <span class="metric__label">Diseño formal e institucional</span>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- Hero Image Banner -->
+            <div class="container">
+                <div class="hero__image-section fade-up fade-up-delay-4" style="margin-top: 3.5rem;">
+                    <img src="https://mgx-backend-cdn.metadl.com/generate/images/1110649/2026-04-12/6487a538-4286-47b4-84ca-a8d7b84a7ad3.png"
+                        alt="Representación artística de manos comunicándose en lengua de señas" loading="eager"
+                        width="1024" height="576">
+                    <div class="hero__image-overlay">
+                        <p>Traducción visual · Accesibilidad · Comunicación inclusiva</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== RESUMEN ===== -->
+        <section class="section section--muted" id="resumen">
+            <div class="container">
+                <div class="section-header fade-up">
+                    <div class="section-kicker">Resumen del sitio</div>
+                    <h2 class="section-title">Contenido principal del proyecto</h2>
+                    <p class="section-desc">
+                        Esta portada reúne un resumen ejecutivo de cada apartado para que el proyecto se entienda con
+                        facilidad antes de entrar a cada sección específica.
+                    </p>
+                </div>
+
+                <div class="grid-3">
+                    <article class="card card--accent fade-up fade-up-delay-1">
+                        <div class="card__pad">
+                            <h3 class="card__title">Tecnologías</h3>
+                            <p class="card__text">
+                                Describe la base técnica del sistema: Flask como backend, HTML y CSS como interfaz,
+                                JavaScript para interactividad, MySQL para almacenamiento y spaCy para el análisis de
+                                texto.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="card card--accent fade-up fade-up-delay-2">
+                        <div class="card__pad">
+                            <h3 class="card__title">Misión</h3>
+                            <p class="card__text">
+                                Expone el propósito institucional del proyecto: facilitar la comunicación entre
+                                personas oyentes y la comunidad sorda mediante una herramienta accesible y en línea.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="card card--accent fade-up fade-up-delay-3">
+                        <div class="card__pad">
+                            <h3 class="card__title">Objetivos</h3>
+                            <p class="card__text">
+                                Resume el objetivo general y los objetivos específicos orientados al desarrollo técnico,
+                                la cobertura del diccionario y la calidad de la interfaz.
+                            </p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TECNOLOGÍAS ===== -->
+        <section class="section" id="tecnologias">
+            <div class="container">
+                <div class="section-header fade-up">
+                    <div class="section-kicker">Tecnologías principales</div>
+                    <h2 class="section-title">Base técnica del proyecto</h2>
+                    <p class="section-desc">
+                        Cada tecnología cumple un papel preciso dentro de la solución. Esta sección resume su función
+                        sin entrar en detalles excesivamente técnicos.
+                    </p>
+                </div>
+
+                <img class="section-banner fade-up"
+                    src="https://mgx-backend-cdn.metadl.com/generate/images/1110649/2026-04-12/0ddb72be-cc6f-4720-9773-bb74c1ed435c.png"
+                    alt="Visualización abstracta de red neuronal y tecnología" loading="lazy" width="1024" height="576">
+
+                <div class="grid-3">
+                    <article class="card tech-card fade-up fade-up-delay-1">
+                        <span class="tech-card__icon">Flask</span>
+                        <h3 class="card__title">Backend del sistema</h3>
+                        <p class="tech-card__desc">
+                            Gestiona las rutas, procesa solicitudes y conecta la interfaz con la lógica de traducción.
+                        </p>
+                        <span class="tech-card__tag">Servidor web</span>
+                    </article>
+
+                    <article class="card tech-card fade-up fade-up-delay-2">
+                        <span class="tech-card__icon">HTML5</span>
+                        <h3 class="card__title">Estructura semántica</h3>
+                        <p class="tech-card__desc">
+                            Organiza la información del sitio con una jerarquía clara y accesible para el usuario.
+                        </p>
+                        <span class="tech-card__tag">Marcado</span>
+                    </article>
+
+                    <article class="card tech-card fade-up fade-up-delay-3">
+                        <span class="tech-card__icon">CSS3</span>
+                        <h3 class="card__title">Presentación visual</h3>
+                        <p class="tech-card__desc">
+                            Define la identidad visual, la paleta institucional, las tarjetas, los espacios y la
+                            experiencia responsive.
+                        </p>
+                        <span class="tech-card__tag">Estilos</span>
+                    </article>
+
+                    <article class="card tech-card fade-up fade-up-delay-4">
+                        <span class="tech-card__icon">MySQL</span>
+                        <h3 class="card__title">Base de datos</h3>
+                        <p class="tech-card__desc">
+                            Guarda el diccionario visual de señas, las relaciones con palabras y las rutas de los
+                            recursos asociados.
+                        </p>
+                        <span class="tech-card__tag">Persistencia</span>
+                    </article>
+
+                    <article class="card tech-card fade-up fade-up-delay-5">
+                        <span class="tech-card__icon">spaCy</span>
+                        <h3 class="card__title">Procesamiento de lenguaje</h3>
+                        <p class="tech-card__desc">
+                            Permite tokenizar y lematizar el texto en español para mejorar la correspondencia con el
+                            diccionario de señas.
+                        </p>
+                        <span class="tech-card__tag">NLP</span>
+                    </article>
+
+                    <article class="card tech-card fade-up fade-up-delay-6">
+                        <span class="tech-card__icon">JS</span>
+                        <h3 class="card__title">Interactividad</h3>
+                        <p class="tech-card__desc">
+                            Administra acciones dinámicas en la interfaz y mejora la experiencia del usuario sin
+                            recargas innecesarias.
+                        </p>
+                        <span class="tech-card__tag">Lógica cliente</span>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== MISIÓN ===== -->
+        <section class="section section--muted" id="mision">
+            <div class="container">
+                <div class="section-header fade-up">
+                    <div class="section-kicker">Misión y visión</div>
+                    <h2 class="section-title">Propósito institucional del proyecto</h2>
+                    <p class="section-desc">
+                        La sección de misión concentra la razón de ser del sistema y su proyección a futuro dentro de un
+                        entorno educativo y social.
+                    </p>
+                </div>
+
+                <img class="section-banner fade-up"
+                    src="https://mgx-backend-cdn.metadl.com/generate/images/1110649/2026-04-12/a5aab15f-3352-4f0b-b497-59abdb764bd2.png"
+                    alt="Grupo diverso de personas comunicándose de forma inclusiva" loading="lazy" width="1024"
+                    height="576">
+
+                <div class="grid-2">
+                    <article class="card card--accent fade-up fade-up-delay-1">
+                        <div class="card__pad">
+                            <h3 class="card__title">Misión</h3>
+                            <p class="card__text">
+                                Facilitar la comunicación entre personas oyentes y la comunidad sorda colombiana
+                                mediante una herramienta accesible, gratuita y en línea que traduzca texto en español a
+                                Lengua de Señas Colombiana.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="card card--accent fade-up fade-up-delay-2">
+                        <div class="card__pad">
+                            <h3 class="card__title">Visión</h3>
+                            <p class="card__text">
+                                Consolidarse como una referencia académica y funcional para la traducción automática al
+                                LSC, ampliando el alcance del diccionario visual y fortaleciendo su utilidad educativa.
+                            </p>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="timeline fade-up fade-up-delay-3" style="margin-top: 1.25rem;">
+                    <div class="timeline__item">
+                        <h3 class="timeline__title">Enfoque social</h3>
+                        <p class="timeline__text">
+                            El proyecto se orienta a reducir barreras de comunicación y a promover una experiencia
+                            digital más inclusiva para distintos contextos.
+                        </p>
+                    </div>
+                    <div class="timeline__item">
+                        <h3 class="timeline__title">Enfoque académico</h3>
+                        <p class="timeline__text">
+                            La propuesta también funciona como soporte para una exposición formal, por su estructura
+                            clara, su lenguaje técnico moderado y su presentación institucional.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== OBJETIVOS ===== -->
+        <section class="section" id="objetivos">
+            <div class="container">
+                <div class="section-header fade-up">
+                    <div class="section-kicker">Objetivos del proyecto</div>
+                    <h2 class="section-title">Meta general y metas específicas</h2>
+                    <p class="section-desc">
+                        La sección de objetivos concentra el alcance funcional de la solución y el trabajo técnico
+                        necesario para desarrollarla de forma ordenada.
+                    </p>
+                </div>
+
+                <img class="section-banner fade-up"
+                    src="https://mgx-backend-cdn.metadl.com/generate/images/1110649/2026-04-12/3c51bb86-be84-4471-927d-e7fcb48c2250.png"
+                    alt="Visualización abstracta de objetivos y logros" loading="lazy" width="1024" height="576">
+
+                <div class="card card--accent fade-up">
+                    <div class="card__pad">
+                        <h3 class="card__title">Objetivo general</h3>
+                        <p class="objective__lead">
+                            Desarrollar una aplicación web funcional que traduzca texto en español a Lengua de Señas
+                            Colombiana mediante procesamiento de lenguaje natural y reproducción secuencial de recursos
+                            visuales, para facilitar la comunicación entre personas oyentes y la comunidad sorda
+                            colombiana.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="margin-top: 1.25rem;">
+                    <article class="card fade-up fade-up-delay-1">
+                        <div class="card__pad">
+                            <h3 class="card__title">Objetivos específicos</h3>
+                            <ul class="list" role="list">
+                                <li class="list__item">
+                                    <span class="list__num">1</span>
+                                    <div class="list__content">
+                                        <strong>Implementar</strong> el backend con Flask para procesar solicitudes de
+                                        traducción y responder con la información necesaria para la reproducción de
+                                        señas.
+                                    </div>
+                                </li>
+                                <li class="list__item">
+                                    <span class="list__num">2</span>
+                                    <div class="list__content">
+                                        <strong>Construir</strong> un diccionario visual en la base de datos con una
+                                        cobertura inicial suficiente para representar las palabras más usadas dentro
+                                        del sistema.
+                                    </div>
+                                </li>
+                                <li class="list__item">
+                                    <span class="list__num">3</span>
+                                    <div class="list__content">
+                                        <strong>Integrar</strong> spaCy para normalizar el texto y mejorar la búsqueda
+                                        de coincidencias entre palabras, lemas y recursos visuales.
+                                    </div>
+                                </li>
+                                <li class="list__item">
+                                    <span class="list__num">4</span>
+                                    <div class="list__content">
+                                        <strong>Diseñar</strong> una interfaz clara, responsive y profesional que
+                                        permita navegar por el proyecto con facilidad desde cualquier dispositivo.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article class="card card--accent fade-up fade-up-delay-2">
+                        <div class="card__pad">
+                            <h3 class="card__title">Alcance esperado</h3>
+                            <p class="card__text">
+                                El proyecto busca resolver una necesidad concreta de comunicación con una solución
+                                estructurada, fácil de presentar y coherente con los principios de accesibilidad y
+                                diseño institucional.
+                            </p>
+                            <div class="timeline" style="margin-top: 1rem;">
+                                <div class="timeline__item">
+                                    <h3 class="timeline__title">Claridad</h3>
+                                    <p class="timeline__text">Información organizada para lectura rápida y ordenada.</p>
+                                </div>
+                                <div class="timeline__item">
+                                    <h3 class="timeline__title">Coherencia</h3>
+                                    <p class="timeline__text">Una línea visual uniforme en todas las secciones.</p>
+                                </div>
+                                <div class="timeline__item">
+                                    <h3 class="timeline__title">Funcionalidad</h3>
+                                    <p class="timeline__text">Estructura pensada para acompañar el desarrollo real del
+                                        sistema.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__brand">
+                <p class="footer__title">Señas Co</p>
+                <p class="footer__text">Traductor de Lengua de Señas Colombiana</p>
+            </div>
+            <div class="footer__links">
+                <a href="tecnologias.html">Tecnologías</a>
+                <a href="mision.html">Misión</a>
+                <a href="objetivos.html">Objetivos</a>
+            </div>
+            <p class="footer__meta">Proyecto académico · Interfaz institucional · 2025</p>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================================
+        // Señas Co — Main JavaScript
+        // Scroll animations, particles, active nav, mobile menu
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initScrollAnimations();
+            initActiveNav();
+            initMobileMenu();
+            initTopbarScroll();
+            initParticles();
+            initLogout();
+        });
+
+        function initLogout() {
+            const btn = document.getElementById('btnLogout');
+            if (!btn) return;
+            btn.addEventListener('click', async () => {
+                try { await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }); }
+                finally { window.location.reload(); }
+            });
+        }
+
+        // ---------- Scroll-triggered fade-up animations ----------
+        function initScrollAnimations() {
+            const elements = document.querySelectorAll('.fade-up');
+            if (!elements.length) return;
+
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                },
+                { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+            );
+
+            elements.forEach((el) => observer.observe(el));
+        }
+
+        // ---------- Active navigation link based on scroll ----------
+        function initActiveNav() {
+            const navLinks = document.querySelectorAll('.nav a[data-nav]');
+            const sections = document.querySelectorAll('main section[id]');
+
+            if (!navLinks.length || !sections.length) return;
+
+            const setActive = () => {
+                const scrollY = window.scrollY + 120;
+                let currentId = '';
+
+                sections.forEach((section) => {
+                    if (section.offsetTop <= scrollY) {
+                        currentId = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach((link) => {
+                    link.classList.remove('is-active');
+                    const href = link.getAttribute('href');
+                    if (href && href.includes('#' + currentId)) {
+                        link.classList.add('is-active');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', setActive, { passive: true });
+            setActive();
+        }
+
+        // ---------- Mobile menu toggle ----------
+        function initMobileMenu() {
+            const toggle = document.getElementById('menuToggle');
+            const nav = document.getElementById('mainNav');
+
+            if (!toggle || !nav) return;
+
+            toggle.addEventListener('click', () => {
+                const isOpen = nav.classList.toggle('is-open');
+                toggle.setAttribute('aria-expanded', isOpen);
+            });
+
+            // Close menu on link click
+            nav.querySelectorAll('a').forEach((link) => {
+                link.addEventListener('click', () => {
+                    nav.classList.remove('is-open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+
+            // Close on outside click
+            document.addEventListener('click', (e) => {
+                if (!nav.contains(e.target) && !toggle.contains(e.target)) {
+                    nav.classList.remove('is-open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+
+        // ---------- Topbar scroll effect ----------
+        function initTopbarScroll() {
+            const topbar = document.getElementById('topbar');
+            if (!topbar) return;
+
+            const onScroll = () => {
+                topbar.classList.toggle('is-scrolled', window.scrollY > 30);
+            };
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+        }
+
+        // ---------- Particle background ----------
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let animationId;
+            let width, height;
+
+            const resize = () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            };
+
+            const createParticles = () => {
+                const count = Math.min(Math.floor((width * height) / 18000), 80);
+                particles = [];
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3,
+                        r: Math.random() * 1.5 + 0.5,
+                        alpha: Math.random() * 0.4 + 0.1,
+                        color: Math.random() > 0.5 ? '59, 130, 246' : '20, 184, 166',
+                    });
+                }
+            };
+
+            const draw = () => {
+                ctx.clearRect(0, 0, width, height);
+
+                // Draw connections
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < 140) {
+                            const opacity = (1 - dist / 140) * 0.12;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(59, 130, 246, ${opacity})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // Draw particles
+                particles.forEach((p) => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
+                    ctx.fill();
+
+                    // Move
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // Wrap around
+                    if (p.x < -10) p.x = width + 10;
+                    if (p.x > width + 10) p.x = -10;
+                    if (p.y < -10) p.y = height + 10;
+                    if (p.y > height + 10) p.y = -10;
+                });
+
+                animationId = requestAnimationFrame(draw);
+            };
+
+            // Reduce motion preference
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (prefersReducedMotion) {
+                canvas.style.display = 'none';
+                return;
+            }
+
+            resize();
+            createParticles();
+            draw();
+
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    cancelAnimationFrame(animationId);
+                    resize();
+                    createParticles();
+                    draw();
+                }, 200);
+            });
+        }
+    </script>
+</body>
+
+</html>

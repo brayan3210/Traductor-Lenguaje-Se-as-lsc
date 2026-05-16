@@ -1,0 +1,59 @@
+{% extends "base_sub.html" %}
+
+{% block title %}Diccionario · Señas Co{% endblock %}
+{% block meta_description %}Explora el diccionario visual LSC: alfabeto, palabras y frases agrupadas por categoría.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/diccionario.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="dic-hero">
+    <div class="container">
+        <div class="dic-hero__inner">
+            <div class="dic-hero__eyebrow">
+                <span class="tx-hero__dot" aria-hidden="true"></span>
+                Diccionario visual
+            </div>
+            <h1 class="dic-hero__title">Explora el diccionario <span class="accent">LSC</span></h1>
+            <p class="dic-hero__lead">
+                Consulta las señas disponibles agrupadas por categoría. Filtra, busca y previsualiza cada recurso.
+            </p>
+
+            <div class="dic-toolbar">
+                <div class="dic-search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="dicBuscar" placeholder="Buscar palabra…" autocomplete="off">
+                </div>
+
+                <div class="dic-filters" role="group" aria-label="Filtros de categoría">
+                    <button type="button" class="dic-filter is-active" data-categoria="">Todo</button>
+                    {% for cat in categorias %}
+                    <button type="button" class="dic-filter" data-categoria="{{ cat }}">{{ cat|capitalize }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="dic-stats" id="dicStats" aria-live="polite"></div>
+        </div>
+    </div>
+</section>
+
+<section class="dic-content">
+    <div class="container">
+        <div class="dic-grid" id="dicGrid" aria-live="polite">
+            <div class="dic-empty" id="dicLoading">
+                <div class="tx-spinner" aria-hidden="true"></div>
+                <p>Cargando diccionario…</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/diccionario.js') }}"></script>
+{% endblock %}

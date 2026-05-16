@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar cuenta · Señas Co</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230b1220'/><text x='32' y='40' text-anchor='middle' font-size='28' font-family='Arial' fill='%2393c5fd' font-weight='700'>SC</text></svg>">
+</head>
+<body>
+<a class="auth-back" href="{{ url_for('main.login') }}">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Volver al login
+</a>
+
+<main class="auth-page">
+    <aside class="auth-aside">
+        <div class="blob blob--1"></div><div class="blob blob--2"></div><div class="blob blob--3"></div>
+        <a href="{{ url_for('main.index') }}" class="auth-brand">
+            <span class="auth-brand__mark"><svg width="22" height="22" viewBox="0 0 26 26"><path d="M5 15.2C8 8 18 8 21 15.2" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M7.5 19.2C10 13.7 16 13.7 18.5 19.2" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.85" fill="none"/></svg></span>
+            <span><span class="auth-brand__name">Señas Co</span><span class="auth-brand__tag">Restablecer contraseña</span></span>
+        </a>
+        <div class="auth-hero">
+            <span class="auth-hero__eyebrow">¿Olvidaste tu contraseña?</span>
+            <h2>Te enviamos <em>un enlace</em> por correo en segundos.</h2>
+            <p class="auth-hero__lead">Ingresa el correo con el que te registraste. Si la dirección existe, recibirás un mensaje con un enlace seguro válido por 15 minutos.</p>
+        </div>
+        <div class="auth-aside__foot"><span>© 2025 Señas Co</span></div>
+    </aside>
+
+    <section class="auth-main">
+        <div class="auth-card">
+            <header class="auth-card__head">
+                <h1 class="auth-card__title">Recuperar cuenta</h1>
+                <p class="auth-card__subtitle">Te enviaremos un enlace al correo registrado.</p>
+            </header>
+
+            <form id="formRecover" class="auth-form" novalidate>
+                <div class="field">
+                    <label for="email" class="field__label">Correo electrónico</label>
+                    <div class="field__wrap">
+                        <span class="field__icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </span>
+                        <input type="email" id="email" name="email" placeholder="tucorreo@ejemplo.com" autocomplete="email" required>
+                    </div>
+                    <span class="field__error" data-error-for="email"></span>
+                </div>
+                <button type="submit" class="btn-auth" id="btnRecover">
+                    <span class="btn-auth__label">Enviar enlace</span>
+                    <span class="btn-auth__spinner"></span>
+                </button>
+            </form>
+
+            <p class="auth-card__foot">¿Recordaste tu contraseña? <a href="{{ url_for('main.login') }}">Iniciar sesión</a></p>
+        </div>
+    </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+</html>

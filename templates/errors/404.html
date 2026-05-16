@@ -1,0 +1,24 @@
+{% extends "base_sub.html" %}
+
+{% block title %}Página no encontrada · Señas Co{% endblock %}
+
+{% block content %}
+<section class="tx-hero">
+    <div class="container">
+        <div class="tx-hero__inner" style="padding: 4rem 0;">
+            <div class="tx-hero__eyebrow">
+                <span class="tx-hero__dot" aria-hidden="true"></span>
+                Error 404
+            </div>
+            <h1 class="tx-hero__title">Página no encontrada</h1>
+            <p class="tx-hero__lead">
+                La dirección que buscas no existe o fue movida. Vuelve al inicio o usa el traductor desde aquí.
+            </p>
+            <div style="display:flex; gap:.8rem; justify-content:center; margin-top:2rem; flex-wrap:wrap;">
+                <a class="button button--primary" href="{{ url_for('main.index') }}">Ir al inicio</a>
+                <a class="button button--secondary" href="{{ url_for('main.traductor') }}">Abrir traductor</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
