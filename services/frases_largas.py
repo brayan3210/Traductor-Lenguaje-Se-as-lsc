@@ -60,6 +60,28 @@ FRASES_LARGAS: tuple[FraseLarga, ...] = (
         # La segunda cláusula es la reacción: PERSONA ASOMBRAR.
         glosa="BOGOTÁ CENTRO · EDIFICIO NUEVO GRANDE ALTO CONSTRUIR · PERSONA ASOMBRAR",
     ),
+    FraseLarga(
+        clave_db="vida_ejemplo",
+        # Frase canónica: "Mi vida es mejor ahora porque estudié".
+        # min_keywords=3 permite que variantes con sinónimos también
+        # disparen el video:
+        #   "Mi vida es mejor al estudio"           → vid + mejor + estud
+        #   "Mi vida gracias al estudio es mejor"   → vid + mejor + estud
+        #   "ahora mi vida es mejor por estudiar"   → vid + mejor + estud + ahor
+        # Las dos palabras core (VIDA + MEJOR) por sí solas no bastan,
+        # evitando falsos positivos como "tengo una vida mejor".
+        stems=(
+            "vid",        # vida, vidas
+            "mejor",      # mejor
+            "ahor",       # ahora, ahorita
+            "porqu",      # porque, por que
+            "estud",      # estudié, estudio, estudios, estudiar, estudiando
+        ),
+        min_keywords=3,
+        # Glosa LSC: tópico temporal (AHORA), luego sujeto+atributo
+        # (MI VIDA MEJOR) y la causa (ESTUDIAR).
+        glosa="AHORA · MI VIDA MEJOR · PORQUE ESTUDIAR",
+    ),
 )
 
 
