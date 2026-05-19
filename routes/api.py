@@ -11,10 +11,12 @@ Endpoints:
 """
 from __future__ import annotations
 
+import json
 import logging
+import secrets
 
 import pymysql
-from flask import Blueprint, jsonify, redirect, request, session, url_for
+from flask import Blueprint, Response, jsonify, redirect, request, session, stream_with_context, url_for
 
 from database.connection import check_connection
 from models.diccionario import DiccionarioRepository, HistorialRepository
@@ -366,6 +368,12 @@ def activar_2fa():
 # ---------- LOGOUT ----------
 @api_bp.post("/logout")
 def logout():
+    # Limpia el historial del chat de este usuario antes de cerrar sesión
+    # para que el próximo login no herede la conversación anterior.
+    try:
+        get_chat_service().limpiar_historial(_chat_session_id())
+    except Exception:
+        logger.warning("No se pudo limpiar historial de chat en logout", exc_info=True)
     session.clear()
     return jsonify({"success": True, "next": "/"})
 
@@ -419,18 +427,44 @@ def me():
     return jsonify({"success": True, "usuario": _serializar_usuario(_U.desde_fila(fila))})
 
 
-# ---------- POST /api/chat ----------
-@api_bp.post("/chat")
-def chat():
-    data = request.get_json(silent=True) or {}
+# ---------- CHAT ----------
+
+def _chat_session_id() -> str:
+    """ID de sesión del chat: por user_id si hay login, si no por cookie.
+
+    Esto permite que el bot recuerde los últimos turnos de cada usuario sin
+    tener que persistir el historial en la BD (vive en memoria del proceso).
+    """
+    user_id = session.get("user_id")
+    if user_id:
+        return f"user:{user_id}"
+    sid = session.get("chat_sid")
+    if not sid:
+        sid = secrets.token_hex(8)
+        session["chat_sid"] = sid
+    return f"anon:{sid}"
+
+
+def _validar_mensaje(data: dict) -> str | tuple[Response, int]:
     mensaje = (data.get("mensaje") or "").strip()
     if not mensaje:
         return _error("El campo 'mensaje' es obligatorio.")
     if len(mensaje) > 1000:
         return _error("El mensaje excede 1000 caracteres.", status=413)
+    return mensaje
 
+
+# ---------- POST /api/chat (no-streaming, compatibilidad) ----------
+@api_bp.post("/chat")
+def chat():
+    data = request.get_json(silent=True) or {}
+    mensaje = _validar_mensaje(data)
+    if not isinstance(mensaje, str):
+        return mensaje  # ya es una tupla (Response, status)
+
+    sid = _chat_session_id()
     try:
-        respuesta = get_chat_service().responder(mensaje)
+        respuesta = get_chat_service().responder(mensaje, session_id=sid)
     except RuntimeError as exc:
         logger.exception("Modelo de chat no disponible")
         return _error(str(exc), status=503)
@@ -439,6 +473,63 @@ def chat():
         return _error("No se pudo generar una respuesta.", status=500)
 
     return jsonify({"success": True, "respuesta": respuesta})
+
+
+# ---------- POST /api/chat/stream (Server-Sent Events) ----------
+@api_bp.post("/chat/stream")
+def chat_stream():
+    """Devuelve la respuesta token-a-token vía SSE.
+
+    Cada evento es una línea `data: {"token": "..."}` seguido de `\n\n`.
+    Cuando termina, envía `data: [DONE]`. Errores se envían como
+    `data: {"error": "..."}`.
+    """
+    data = request.get_json(silent=True) or {}
+    mensaje = _validar_mensaje(data)
+    if not isinstance(mensaje, str):
+        return mensaje
+
+    sid = _chat_session_id()
+
+    def _gen():
+        try:
+            service = get_chat_service()
+            for token in service.responder_stream(mensaje, session_id=sid):
+                # SSE: cada bloque termina con doble salto de línea.
+                yield f"data: {json.dumps({'token': token}, ensure_ascii=False)}\n\n"
+            yield "data: [DONE]\n\n"
+        except RuntimeError as exc:
+            logger.exception("Modelo de chat no disponible (stream)")
+            yield f"data: {json.dumps({'error': str(exc)})}\n\n"
+        except Exception:
+            logger.exception("Error al generar stream de chat")
+            yield f"data: {json.dumps({'error': 'No se pudo generar la respuesta.'})}\n\n"
+
+    return Response(
+        stream_with_context(_gen()),
+        mimetype="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache, no-transform",
+            "X-Accel-Buffering": "no",          # nginx: no bufferizar
+            "Connection": "keep-alive",
+        },
+    )
+
+
+# ---------- POST /api/chat/reset ----------
+@api_bp.post("/chat/reset")
+def chat_reset():
+    """Olvida el historial conversacional de esta sesión."""
+    sid = _chat_session_id()
+    get_chat_service().limpiar_historial(sid)
+    return jsonify({"success": True})
+
+
+# ---------- GET /api/chat/info ----------
+@api_bp.get("/chat/info")
+def chat_info():
+    """Diagnóstico del modelo (modelo activo, device, parámetros)."""
+    return jsonify({"success": True, **get_chat_service().info()})
 
 
 # ---------- GET /api/salud ----------

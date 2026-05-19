@@ -5,6 +5,7 @@ Expone una factory `create_app()` para facilitar pruebas y despliegue.
 from __future__ import annotations
 
 import logging
+import os
 from datetime import timedelta
 
 from flask import Flask
@@ -15,6 +16,7 @@ from database.connection import close_pool, init_pool
 from models.recovery import PasswordResetRepository, RecoveryCodeRepository
 from models.usuario import UsuarioRepository
 from routes import api_bp, main_bp
+from services.chat_service import get_chat_service
 
 
 def _configurar_logging(nivel: int = logging.INFO) -> None:
@@ -52,6 +54,24 @@ def create_app(config_name: str | None = None) -> Flask:
 
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
+
+    # Pre-warmup del modelo de chat en background (controlado por
+    # CHAT_WARMUP en .env). Arranca la carga del GGUF en un hilo aparte
+    # para que la primera petición no pague el costo de cargar el modelo.
+    #
+    # IMPORTANTE: en `debug=True` Flask spawn DOS procesos (reloader parent
+    # + worker child). Si lanzamos warmup en ambos, se carga el modelo dos
+    # veces en memoria (≈10 GB en lugar de ≈5 GB). El reloader parent
+    # nunca sirve requests, así que sólo necesitamos el modelo en el worker.
+    # WERKZEUG_RUN_MAIN=true en el worker, ausente en el parent.
+    en_worker = (not Config.DEBUG) or os.environ.get("WERKZEUG_RUN_MAIN") == "true"
+    if Config.CHAT_WARMUP and en_worker:
+        try:
+            get_chat_service().warmup_async()
+        except Exception:
+            logging.getLogger(__name__).warning(
+                "No se pudo lanzar el pre-warmup del chat", exc_info=True
+            )
 
     @app.context_processor
     def _inyectar_usuario():
