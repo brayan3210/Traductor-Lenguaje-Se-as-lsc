@@ -56,10 +56,29 @@ from services.nlp_service import (
 logger = logging.getLogger(__name__)
 
 
+# Mapping dígito → palabra (fallback letra-a-letra para números sin seña propia).
 NUMERO_A_PALABRA = {
     "0": "cero", "1": "uno", "2": "dos", "3": "tres", "4": "cuatro",
     "5": "cinco", "6": "seis", "7": "siete", "8": "ocho", "9": "nueve",
 }
+
+# Números con seña dedicada en el diccionario LSC. Si el usuario escribe
+# "12", "100", "1000" preferimos esta seña a desglosar dígito por dígito.
+# Las claves se buscan en BD; si una clave aún no tiene seña cargada el
+# fallback dígito-a-dígito se aplica automáticamente.
+NUMERO_DIRECTO = {
+    "0": "cero", "1": "uno", "2": "dos", "3": "tres", "4": "cuatro",
+    "5": "cinco", "6": "seis", "7": "siete", "8": "ocho", "9": "nueve",
+    "10": "diez", "11": "once", "12": "doce", "13": "trece", "14": "catorce",
+    "15": "quince", "16": "dieciseis", "17": "diecisiete",
+    "18": "dieciocho", "19": "diecinueve",
+    "50": "cincuenta", "100": "cien", "600": "seiscientos",
+    "1000": "mil", "1000000": "millon",
+}
+
+# Separadores aceptados dentro de una secuencia numérica
+# (ej. "12,1,2,3" o "12 1 2 3" o "12;1;2;3").
+_SEP_NUMERO = re.compile(r"[\s,;.\-/|]+")
 
 # Marcadores temporales insertados según el tiempo verbal.
 TIEMPO_PASADO_DEFAULT = "antes"
@@ -794,29 +813,83 @@ class TraductorService:
         )
 
     def _traducir_numero(self, texto: str, rol: str = "otro", clausula: int = 0) -> list[Sena]:
-        if not texto.isdigit():
+        """Traduce un token numérico a su(s) seña(s).
+
+        Acepta:
+          - Un único número entero ("12", "100", "1000").
+          - Una secuencia separada por comas/espacios/punto/punto-y-coma/
+            guion/barra ("12,1,2,3" o "12 1 2 3" o "12;1;2").
+          - Cualquier mezcla; los separadores se descartan.
+
+        Estrategia por número:
+          1. Si está en NUMERO_DIRECTO **y existe en BD** → una sola seña
+             (ej. 12 → DOCE, 100 → CIEN, 1000 → MIL).
+          2. Si no, fallback dígito a dígito (ej. 73 → SIETE TRES).
+        """
+        # Limpieza + tokenización por separadores.
+        partes = [p for p in _SEP_NUMERO.split(texto.strip()) if p]
+        if not partes:
             return []
-        palabras = [NUMERO_A_PALABRA[d] for d in texto if d in NUMERO_A_PALABRA]
-        if not palabras:
+        # Cada parte debe ser puramente numérica (ignora basura).
+        numeros = [p for p in partes if p.isdigit()]
+        if not numeros:
             return []
-        registros = self.diccionario.obtener_varias(palabras)
+
+        # Precarga: todas las palabras candidatas que vamos a consultar.
+        candidatas: set[str] = set()
+        for num in numeros:
+            directa = NUMERO_DIRECTO.get(num)
+            if directa:
+                candidatas.add(directa)
+            for d in num:
+                if d in NUMERO_A_PALABRA:
+                    candidatas.add(NUMERO_A_PALABRA[d])
+        registros = self.diccionario.obtener_varias(sorted(candidatas))
+
         senas: list[Sena] = []
-        for palabra in palabras:
+        for num in numeros:
+            senas.extend(self._traducir_un_numero(num, registros, rol, clausula))
+        return senas
+
+    def _traducir_un_numero(
+        self,
+        num: str,
+        registros: dict[str, dict[str, Any]],
+        rol: str,
+        clausula: int,
+    ) -> list[Sena]:
+        """Traduce un solo número entero usando los registros pre-cargados."""
+        # 1) Seña directa (12, 100, 1000…) — solo si está cargada en BD.
+        directa = NUMERO_DIRECTO.get(num)
+        if directa and registros.get(directa):
+            base = self._sena_desde_registro(registros[directa], rol=rol, clausula=clausula)
+            return [Sena(
+                palabra=base.palabra, gif_url=base.gif_url, tipo=base.tipo,
+                encontrado=True, fuente="numero", rol=rol,
+                media_type=base.media_type, clausula=clausula,
+            )]
+
+        # 2) Fallback dígito-a-dígito.
+        salida: list[Sena] = []
+        for d in num:
+            palabra = NUMERO_A_PALABRA.get(d)
+            if not palabra:
+                continue
             entrada = registros.get(palabra)
             if entrada:
                 base = self._sena_desde_registro(entrada, rol=rol, clausula=clausula)
-                senas.append(Sena(
+                salida.append(Sena(
                     palabra=base.palabra, gif_url=base.gif_url, tipo=base.tipo,
                     encontrado=True, fuente="numero", rol=rol,
                     media_type=base.media_type, clausula=clausula,
                 ))
             else:
-                senas.append(Sena(
+                salida.append(Sena(
                     palabra=palabra, gif_url="", tipo="numero",
                     encontrado=False, fuente="no_disponible", rol=rol,
                     clausula=clausula,
                 ))
-        return senas
+        return salida
 
     def _deletrear(self, texto: str, rol: str = "otro", clausula: int = 0) -> list[Sena]:
         """Genera la secuencia de letras del alfabeto dactilológico."""
