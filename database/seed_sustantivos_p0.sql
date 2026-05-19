@@ -18,8 +18,8 @@ USE traductor_lsc;
 INSERT IGNORE INTO senas (palabra, gif_url, tipo, categoria, descripcion) VALUES
 ('perro',    '/static/gifs/palabras/perro.gif',    'palabra', 'animales', 'Animal doméstico — mano simulando orejas caídas + lengua'),
 ('gato',     '/static/gifs/palabras/gato.gif',     'palabra', 'animales', 'Animal doméstico felino — dedos imitando bigotes'),
-('mama',     '/static/gifs/palabras/mama.gif',     'palabra', 'familia',  'Madre (informal). Misma seña base que MADRE'),
-('papa',     '/static/gifs/palabras/papa.gif',     'palabra', 'familia',  'Padre (informal). Misma seña base que PADRE'),
+('mama',     '/static/gifs/palabras/madre.gif',    'palabra', 'familia',  'Madre (informal). Reusa el video de MADRE'),
+('papa',     '/static/gifs/palabras/padre.gif',    'palabra', 'familia',  'Padre (informal). Reusa el video de PADRE'),
 ('niño',     '/static/gifs/palabras/nino.gif',     'palabra', 'personas', 'Persona joven varón'),
 ('niña',     '/static/gifs/palabras/nina.gif',     'palabra', 'personas', 'Persona joven mujer'),
 ('bebe',     '/static/gifs/palabras/bebe.gif',     'palabra', 'personas', 'Niño muy pequeño / bebé'),

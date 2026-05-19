@@ -70,3 +70,8 @@ instance/
 *.tmp
 *.bak
 *.orig
+
+# ---------- Notas internas de trabajo (no versionar en raíz) ----------
+# El equipo conserva una copia en docs/PROJECT_CONTEXT.md;
+# esta entrada evita que la copia local de la raíz se suba.
+/PROJECT_CONTEXT.md

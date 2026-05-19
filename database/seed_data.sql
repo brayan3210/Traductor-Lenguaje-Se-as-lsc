@@ -333,3 +333,179 @@ INSERT INTO senas (palabra, gif_url, tipo, categoria, descripcion) VALUES
 INSERT INTO senas (palabra, gif_url, tipo, categoria, descripcion) VALUES
 ('edificio_ejemplo', '/static/gifs/palabras/edificio_ejemplo.gif', 'frase', 'ejemplos',
  'Aquí en el centro de Bogotá están construyendo un edificio nuevo, grandísimo y altísimo. Las personas se asombran al verlo.');
+
+-- ============================================================
+-- AMPLIACIÓN 2026-05-19 (secciones 21-29)
+-- ~140 entradas nuevas: numeros 11+, adjetivos, emociones, verbos,
+-- direcciones, comida, hogar, conceptos abstractos y frases ejemplo.
+-- Los archivos físicos son .m4v o .mp4 y se resuelven automáticamente
+-- desde `services/media_resolver.py`.
+-- INSERT IGNORE evita conflicto con entradas previas (ej. cuatro, malo).
+-- ============================================================
+
+-- ---------- 21. NÚMEROS EXTENDIDOS (11+ / decenas / centenas / millares) ----------
+INSERT IGNORE INTO senas (palabra, gif_url, tipo, categoria, descripcion) VALUES
+('once',         '/static/gifs/palabras/once.gif',         'numero', 'numeros', 'Número 11'),
+('doce',         '/static/gifs/palabras/doce.gif',         'numero', 'numeros', 'Número 12'),
+('trece',        '/static/gifs/palabras/trece.gif',        'numero', 'numeros', 'Número 13'),
+('catorce',      '/static/gifs/palabras/catorce.gif',      'numero', 'numeros', 'Número 14'),
+('quince',       '/static/gifs/palabras/quince.gif',       'numero', 'numeros', 'Número 15'),
+('dieciseis',    '/static/gifs/palabras/dieciseis.gif',    'numero', 'numeros', 'Número 16'),
+('diecisiete',   '/static/gifs/palabras/diecisiete.gif',   'numero', 'numeros', 'Número 17'),
+('dieciocho',    '/static/gifs/palabras/dieciocho.gif',    'numero', 'numeros', 'Número 18'),
+('diecinueve',   '/static/gifs/palabras/diecinueve.gif',   'numero', 'numeros', 'Número 19'),
+('cincuenta',    '/static/gifs/palabras/cincuenta.gif',    'numero', 'numeros', 'Número 50'),
+('cien',         '/static/gifs/palabras/cien.gif',         'numero', 'numeros', 'Número 100'),
+('seiscientos',  '/static/gifs/palabras/seiscientos.gif',  'numero', 'numeros', 'Número 600'),
+('mil',          '/static/gifs/palabras/mil.gif',          'numero', 'numeros', 'Número 1.000'),
+('millon',       '/static/gifs/palabras/millon.gif',       'numero', 'numeros', 'Número 1.000.000'),
+('numero',       '/static/gifs/palabras/numero.gif',       'palabra', 'numeros', 'Concepto: número');
+
+-- ---------- 22. ADJETIVOS Y PERSONALIDAD EXTENDIDOS ----------
+INSERT IGNORE INTO senas (palabra, gif_url, tipo, categoria, descripcion) VALUES
+('agil',          '/static/gifs/palabras/agil.gif',          'palabra', 'adjetivos', 'De movimientos rápidos y ligeros'),
+('amable',        '/static/gifs/palabras/amable.gif',        'palabra', 'adjetivos', 'Que trata con afecto'),
+('chistoso',      '/static/gifs/palabras/chistoso.gif',      'palabra', 'adjetivos', 'Que hace reír'),
+('cobarde',       '/static/gifs/palabras/cobarde.gif',       'palabra', 'adjetivos', 'Sin valor para afrontar peligros'),
+('curioso',       '/static/gifs/palabras/curioso.gif',       'palabra', 'adjetivos', 'Que quiere saber o averiguar'),
+('desobediente',  '/static/gifs/palabras/desobediente.gif',  'palabra', 'adjetivos', 'Que no obedece'),
+('desocupado',    '/static/gifs/palabras/desocupado.gif',    'palabra', 'adjetivos', 'Libre, sin actividad'),
+('desordenado',   '/static/gifs/palabras/desordenado.gif',   'palabra', 'adjetivos', 'Sin orden'),
+('egoista',       '/static/gifs/palabras/egoista.gif',       'palabra', 'adjetivos', 'Que solo piensa en sí mismo'),
+('elegante',      '/static/gifs/palabras/elegante.gif',      'palabra', 'adjetivos', 'Con buena presentación'),
+('expresivo',     '/static/gifs/palabras/expresivo.gif',     'palabra', 'adjetivos', 'Que muestra sentimientos con claridad'),
+('famoso',        '/static/gifs/palabras/famoso.gif',        'palabra', 'adjetivos', 'Conocido por muchas personas'),
+('fiel',          '/static/gifs/palabras/fiel.gif',          'palabra', 'adjetivos', 'Que mantiene su lealtad'),
+('flaco',         '/static/gifs/palabras/flaco.gif',         'palabra', 'adjetivos', 'De poca corpulencia'),
+('generoso',      '/static/gifs/palabras/generoso.gif',      'palabra', 'adjetivos', 'Que da con gusto'),
+('gordo',         '/static/gifs/palabras/gordo.gif',         'palabra', 'adjetivos', 'De mucha corpulencia'),
+('grosero',       '/static/gifs/palabras/grosero.gif',       'palabra', 'adjetivos', 'Maleducado'),
+('infiel',        '/static/gifs/palabras/infiel.gif',        'palabra', 'adjetivos', 'Que falta a la lealtad'),
+('inteligente',   '/static/gifs/palabras/inteligente.gif',   'palabra', 'adjetivos', 'Con capacidad de comprender'),
+('juicioso',      '/static/gifs/palabras/juicioso.gif',      'palabra', 'adjetivos', 'Que actúa con prudencia'),
+('lider',         '/static/gifs/palabras/lider.gif',         'palabra', 'adjetivos', 'Persona que guía a un grupo'),
+('mentiroso',     '/static/gifs/palabras/mentiroso.gif',     'palabra', 'adjetivos', 'Que dice mentiras'),
+('obediente',     '/static/gifs/palabras/obediente.gif',     'palabra', 'adjetivos', 'Que cumple órdenes'),
+('ocupado',       '/static/gifs/palabras/ocupado.gif',       'palabra', 'adjetivos', 'Con actividad o tareas pendientes'),
+('orgulloso',     '/static/gifs/palabras/orgulloso.gif',     'palabra', 'adjetivos', 'Con orgullo o vanidad'),
+('perezoso',      '/static/gifs/palabras/perezoso.gif',      'palabra', 'adjetivos', 'Que evita el trabajo'),
+('pesimista',     '/static/gifs/palabras/pesimista.gif',     'palabra', 'adjetivos', 'Que ve lo negativo de las cosas'),
+('pobre',         '/static/gifs/palabras/pobre.gif',         'palabra', 'adjetivos', 'Sin recursos económicos'),
+('responsable',   '/static/gifs/palabras/responsable.gif',   'palabra', 'adjetivos', 'Que cumple con sus obligaciones'),
+('rico',          '/static/gifs/palabras/rico.gif',          'palabra', 'adjetivos', 'Con muchos recursos / adinerado'),
+('rico_2',        '/static/gifs/palabras/rico_2.gif',        'palabra', 'adjetivos', 'Variante: rico = sabroso (comida)'),
+('seguro',        '/static/gifs/palabras/seguro.gif',        'palabra', 'adjetivos', 'Sin duda / a salvo'),
+('solo',          '/static/gifs/palabras/solo.gif',          'palabra', 'adjetivos', 'Sin compañía'),
+('tacano',        '/static/gifs/palabras/tacano.gif',        'palabra', 'adjetivos', 'Avaro / que no comparte'),
+('terco',         '/static/gifs/palabras/terco.gif',         'palabra', 'adjetivos', 'Obstinado, que no cede');
+
+-- ---------- 23. EMOCIONES Y SENTIMIENTOS EXTENDIDOS ----------
+INSERT IGNORE INTO senas (palabra, gif_url, tipo, categoria, descripcion) VALUES
+('aburrido',     '/static/gifs/palabras/aburrido.gif',     'palabra', 'emociones', 'Sin interés / sin diversión'),
+('amor',         '/static/gifs/palabras/amor.gif',         'palabra', 'emociones', 'Sentimiento de afecto profundo'),
+('bravo',        '/static/gifs/palabras/bravo.gif',        'palabra', 'emociones', 'Enojado, con rabia'),
+('celoso',       '/static/gifs/palabras/celoso.gif',       'palabra', 'emociones', 'Con celos'),
+('confianza',    '/static/gifs/palabras/confianza.gif',    'palabra', 'emociones', 'Seguridad en alguien o algo'),
+('confundido',   '/static/gifs/palabras/confundido.gif',   'palabra', 'emociones', 'Sin claridad mental'),
+('contento',     '/static/gifs/palabras/contento.gif',     'palabra', 'emociones', 'Alegre, satisfecho'),
+('deprimido',    '/static/gifs/palabras/deprimido.gif',    'palabra', 'emociones', 'Con tristeza profunda'),
+('desconcertado','/static/gifs/palabras/desconcertado.gif','palabra', 'emociones', 'Sorprendido sin saber qué hacer'),
+('emocionado',   '/static/gifs/palabras/emocionado.gif',   'palabra', 'emociones', 'Con emoción intensa'),
+('enamorado',    '/static/gifs/palabras/enamorado.gif',    'palabra', 'emociones', 'Con sentimiento de amor por alguien'),
+('envidioso',    '/static/gifs/palabras/envidioso.gif',    'palabra', 'emociones', 'Que siente envidia'),
+('furioso',      '/static/gifs/palabras/furioso.gif',      'palabra', 'emociones', 'Con ira intensa'),
+('loco',         '/static/gifs/palabras/loco.gif',         'palabra', 'emociones', 'Con comportamiento alterado'),
+('miedo',        '/static/gifs/palabras/miedo.gif',        'palabra', 'emociones', 'Temor ante un peligro'),
+('odio',         '/static/gifs/palabras/odio.gif',         'palabra', 'emociones', 'Sentimiento de rechazo profundo'),
+('paciencia',    '/static/gifs/palabras/paciencia.gif',    'palabra', 'emociones', 'Capacidad de esperar con calma'),
+('pena',         '/static/gifs/palabras/pena.gif',         'palabra', 'emociones', 'Tristeza / vergüenza (CO)'),
+('serio',        '/static/gifs/palabras/serio.gif',        'palabra', 'emociones', 'Sin alegría aparente'),
+('timido',       '/static/gifs/palabras/timido.gif',       'palabra', 'emociones', 'Con vergüenza para socializar'),
+('tranquilo',    '/static/gifs/palabras/tranquilo.gif',    'palabra', 'emociones', 'En calma, sin alteración');
+
+-- ---------- 24. VERBOS EXTENDIDOS ----------
+INSERT IGNORE INTO senas (palabra, gif_url, tipo, categoria, descripcion) VALUES
+('abrazar',     '/static/gifs/palabras/abrazar.gif',     'palabra', 'verbos', 'Rodear con los brazos'),
+('aprender',    '/static/gifs/palabras/aprender.gif',    'palabra', 'verbos', 'Adquirir conocimiento'),
+('besar',       '/static/gifs/palabras/besar.gif',       'palabra', 'verbos', 'Dar un beso'),
+('conocer',     '/static/gifs/palabras/conocer.gif',     'palabra', 'verbos', 'Tener conocimiento de algo o alguien'),
+('creer',       '/static/gifs/palabras/creer.gif',       'palabra', 'verbos', 'Aceptar como verdadero'),
+('decidir',     '/static/gifs/palabras/decidir.gif',     'palabra', 'verbos', 'Tomar una determinación'),
+('defender',    '/static/gifs/palabras/defender.gif',    'palabra', 'verbos', 'Proteger frente a un ataque'),
+('dudar',       '/static/gifs/palabras/dudar.gif',       'palabra', 'verbos', 'Tener incertidumbre'),
+('embetunar',   '/static/gifs/palabras/embetunar.gif',   'palabra', 'verbos', 'Aplicar betún (a los zapatos)'),
+('entender',    '/static/gifs/palabras/entender.gif',    'palabra', 'verbos', 'Comprender el significado'),
+('ignorar',     '/static/gifs/palabras/ignorar.gif',     'palabra', 'verbos', 'No prestar atención / desconocer'),
+('interesar',   '/static/gifs/palabras/interesar.gif',   'palabra', 'verbos', 'Despertar atención o curiosidad'),
+('olvidar',     '/static/gifs/palabras/olvidar.gif',     'palabra', 'verbos', 'Dejar de recordar'),
+('preocupar',   '/static/gifs/palabras/preocupar.gif',   'palabra', 'verbos', 'Producir inquietud'),
+('recordar',    '/static/gifs/palabras/recordar.gif',    'palabra', 'verbos', 'Traer a la memoria'),
+('pensar_2',    '/static/gifs/palabras/pensar_2.gif',    'palabra', 'verbos', 'Variante de PENSAR (segunda forma)');
+
+-- ---------- 25. DIRECCIONES Y UBICACIÓN ----------
+INSERT IGNORE INTO senas (palabra, gif_url, tipo, categoria, descripcion) VALUES
+('abajo',       '/static/gifs/palabras/abajo.gif',       'palabra', 'direcciones', 'Hacia la parte inferior'),
+('adelante',    '/static/gifs/palabras/adelante.gif',    'palabra', 'direcciones', 'Hacia el frente'),
+('adentro',     '/static/gifs/palabras/adentro.gif',     'palabra', 'direcciones', 'Hacia el interior'),
+('afuera',      '/static/gifs/palabras/afuera.gif',      'palabra', 'direcciones', 'Hacia el exterior'),
+('alla',        '/static/gifs/palabras/alla.gif',        'palabra', 'direcciones', 'En aquel lugar (lejos)'),
+('aqui',        '/static/gifs/palabras/aqui.gif',        'palabra', 'direcciones', 'En este lugar'),
+('arriba',      '/static/gifs/palabras/arriba.gif',      'palabra', 'direcciones', 'Hacia la parte superior'),
+('atencion',    '/static/gifs/palabras/atencion.gif',    'palabra', 'direcciones', 'Llamado a poner foco'),
+('cerca',       '/static/gifs/palabras/cerca.gif',       'palabra', 'direcciones', 'A poca distancia'),
+('detras',      '/static/gifs/palabras/detras.gif',      'palabra', 'direcciones', 'En la parte posterior'),
+('lejos',       '/static/gifs/palabras/lejos.gif',       'palabra', 'direcciones', 'A gran distancia'),
+('mucho',       '/static/gifs/palabras/mucho.gif',       'palabra', 'cantidades',  'Gran cantidad'),
+('poco',        '/static/gifs/palabras/poco.gif',        'palabra', 'cantidades',  'Pequeña cantidad'),
+('norte',       '/static/gifs/palabras/norte.gif',       'palabra', 'direcciones', 'Punto cardinal norte'),
+('sur',         '/static/gifs/palabras/sur.gif',         'palabra', 'direcciones', 'Punto cardinal sur'),
+('oriente',     '/static/gifs/palabras/oriente.gif',     'palabra', 'direcciones', 'Punto cardinal este'),
+('occidente',   '/static/gifs/palabras/occidente.gif',   'palabra', 'direcciones', 'Punto cardinal oeste');
+
+-- ---------- 26. COMIDA EXTENDIDA ----------
+INSERT IGNORE INTO senas (palabra, gif_url, tipo, categoria, descripcion) VALUES
+('aguacate',       '/static/gifs/palabras/aguacate.gif',       'palabra', 'comida', 'Fruto del aguacatero'),
+('aji',            '/static/gifs/palabras/aji.gif',            'palabra', 'comida', 'Chile picante'),
+('ajo',            '/static/gifs/palabras/ajo.gif',            'palabra', 'comida', 'Bulbo aromático'),
+('arveja',         '/static/gifs/palabras/arveja.gif',         'palabra', 'comida', 'Legumbre verde'),
+('banano',         '/static/gifs/palabras/banano.gif',         'palabra', 'comida', 'Fruta amarilla alargada'),
+('bandeja',        '/static/gifs/palabras/bandeja.gif',        'palabra', 'comida', 'Plato grande para servir'),
+('batidora',       '/static/gifs/palabras/batidora.gif',       'palabra', 'comida', 'Electrodoméstico para batir'),
+('botella',        '/static/gifs/palabras/botella.gif',        'palabra', 'comida', 'Recipiente para líquidos'),
+('cebolla',        '/static/gifs/palabras/cebolla.gif',        'palabra', 'comida', 'Bulbo de sabor fuerte'),
+('panal',          '/static/gifs/palabras/panal.gif',          'palabra', 'comida', 'Estructura de la abeja con miel'),
+('panela',         '/static/gifs/palabras/panela.gif',         'palabra', 'comida', 'Azúcar de caña sin refinar'),
+('papa_comida',    '/static/gifs/palabras/papa_comida.gif',    'palabra', 'comida', 'Tubérculo (papa / patata)'),
+('pasta',          '/static/gifs/palabras/pasta.gif',          'palabra', 'comida', 'Masa de harina (espaguetis, macarrones)'),
+('perro_caliente', '/static/gifs/palabras/perro_caliente.gif', 'frase',   'comida', 'Hot dog'),
+('pizza',          '/static/gifs/palabras/pizza.gif',          'palabra', 'comida', 'Plato italiano de masa horneada'),
+('ponque',         '/static/gifs/palabras/ponque.gif',         'palabra', 'comida', 'Torta dulce'),
+('sal',            '/static/gifs/palabras/sal.gif',            'palabra', 'comida', 'Condimento blanco'),
+('salsa',          '/static/gifs/palabras/salsa.gif',          'palabra', 'comida', 'Acompañamiento líquido'),
+('sanduche',       '/static/gifs/palabras/sanduche.gif',       'palabra', 'comida', 'Emparedado'),
+('sopa',           '/static/gifs/palabras/sopa.gif',           'palabra', 'comida', 'Caldo con ingredientes'),
+('tamal',          '/static/gifs/palabras/tamal.gif',          'palabra', 'comida', 'Masa envuelta tradicional'),
+('vino',           '/static/gifs/palabras/vino.gif',           'palabra', 'comida', 'Bebida alcohólica de uva'),
+('yogurt',         '/static/gifs/palabras/yogurt.gif',         'palabra', 'comida', 'Lácteo fermentado');
+
+-- ---------- 27. HOGAR Y BAÑO ----------
+INSERT IGNORE INTO senas (palabra, gif_url, tipo, categoria, descripcion) VALUES
+('bano',             '/static/gifs/palabras/bano.gif',             'palabra', 'hogar', 'Espacio para aseo personal'),
+('jabon',            '/static/gifs/palabras/jabon.gif',            'palabra', 'hogar', 'Producto para limpieza'),
+('papel_higienico',  '/static/gifs/palabras/papel_higienico.gif',  'frase',   'hogar', 'Papel para aseo personal'),
+('perfume',          '/static/gifs/palabras/perfume.gif',          'palabra', 'hogar', 'Sustancia aromática'),
+('toalla',           '/static/gifs/palabras/toalla.gif',           'palabra', 'hogar', 'Tejido para secarse'),
+('toalla_higienica', '/static/gifs/palabras/toalla_higienica.gif', 'frase',   'hogar', 'Producto de higiene femenina');
+
+-- ---------- 28. CONCEPTOS ABSTRACTOS ----------
+INSERT IGNORE INTO senas (palabra, gif_url, tipo, categoria, descripcion) VALUES
+('idea',     '/static/gifs/palabras/idea.gif',     'palabra', 'conceptos', 'Pensamiento, ocurrencia'),
+('problema', '/static/gifs/palabras/problema.gif', 'palabra', 'conceptos', 'Situación difícil de resolver'),
+('razon',    '/static/gifs/palabras/razon.gif',    'palabra', 'conceptos', 'Motivo o causa'),
+('verdad',   '/static/gifs/palabras/verdad.gif',   'palabra', 'conceptos', 'Lo que se ajusta a la realidad'),
+('vida',     '/static/gifs/palabras/vida.gif',     'palabra', 'conceptos', 'Existencia / experiencia humana');
+
+-- ---------- 29. FRASES DE EJEMPLO EXTENDIDAS ----------
+INSERT IGNORE INTO senas (palabra, gif_url, tipo, categoria, descripcion) VALUES
+('vida_ejemplo', '/static/gifs/palabras/vida_ejemplo.gif', 'frase', 'ejemplos',
+ 'Mi vida es mejor ahora porque estudié — frase de ejemplo del uso de VIDA en LSC.');
