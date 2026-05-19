@@ -322,6 +322,8 @@ GOOGLE_REDIRECT_URI=http://127.0.0.1:5000/api/auth/google/callback
 
 ## Base de datos
 
+> **Guía detallada paso a paso**: [`docs/DATABASE.md`](docs/DATABASE.md) — incluye cómo funciona el flujo de `init_db`, qué hace cada una de las 5 tablas, setup en local vs producción, backups y solución de problemas.
+
 El esquema vive en [`database/schema.sql`](database/schema.sql) y declara cinco tablas:
 
 | Tabla                   | Propósito                                            |
