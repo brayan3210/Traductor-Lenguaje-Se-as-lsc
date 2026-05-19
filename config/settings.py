@@ -77,6 +77,29 @@ class Config:
         "http://127.0.0.1:5000/api/auth/google/callback",
     )
 
+    # ---------- Chat IA (GPT4All / llama.cpp) ----------
+    # Modelo a usar. Por defecto el Llama 3 8B que ya tiene el usuario.
+    # Para 3x más velocidad cambiar a un modelo 3B, ej:
+    #   CHAT_MODEL=Phi-3-mini-4k-instruct.Q4_0.gguf
+    #   CHAT_MODEL=qwen2-1_5b-instruct-q4_0.gguf
+    # GPT4All los descarga automáticamente la primera vez.
+    CHAT_MODEL: str = os.getenv("CHAT_MODEL", "Meta-Llama-3-8B-Instruct.Q4_0.gguf")
+    # Dispositivo: 'cpu', 'gpu' (auto-detect Vulkan/CUDA), 'nvidia', 'amd',
+    # 'intel'. 'gpu' es el modo recomendado: GPT4All cae a CPU si no hay GPU.
+    CHAT_DEVICE: str = os.getenv("CHAT_DEVICE", "gpu")
+    CHAT_MAX_TOKENS: int = _env_int("CHAT_MAX_TOKENS", 300)
+    CHAT_N_CTX: int      = _env_int("CHAT_N_CTX", 2048)
+    CHAT_N_BATCH: int    = _env_int("CHAT_N_BATCH", 256)
+    # Threads de inferencia. 0 = autodetectar como cores físicos (lógicos // 2),
+    # mejor heurística para CPUs con SMT que la antigua "lógicos - 1" que
+    # causaba contención severa en Ryzen low-voltage. Override útil si el
+    # usuario tiene un CPU sin SMT (poner = núm cores).
+    CHAT_N_THREADS: int  = _env_int("CHAT_N_THREADS", 0)
+    # Cuántos turnos previos mantener en memoria (más turnos = más prefill).
+    CHAT_HISTORIAL: int  = _env_int("CHAT_HISTORIAL", 2)
+    # Lanzar la carga del modelo en background al arrancar la app.
+    CHAT_WARMUP: bool    = _env_bool("CHAT_WARMUP", True)
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
